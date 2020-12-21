@@ -25,6 +25,7 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: c446c05db5c544471b4c357d7fa56d04, type: 2}
   - {fileID: 11400000, guid: 70bb6c777fd234af5b0c385af3dcdac6, type: 2}
+  - {fileID: 11400000, guid: ccc0728509600489fb4fcc01648dcc86, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -34,7 +35,7 @@ MonoBehaviour:
     m_Profiles:
     - m_InheritedParent: 
       m_Id: f093e044c164b4b7cab9a33a71bdfffa
-      m_ProfileName: Default
+      m_ProfileName: iOS
       m_Values:
       - m_Id: 797ca0271c3dd4c8aaafadb608803bc5
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
@@ -45,7 +46,7 @@ MonoBehaviour:
       - m_Id: 5e805728eda3746f5b5744123175b5bc
         m_Value: ServerData/[BuildTarget]
       - m_Id: 43f63b716584d41638d8ba5152fb518b
-        m_Value: http://localhost/[BuildTarget]
+        m_Value: https://ExternalDLC.b-cdn.net/[BuildTarget]
     m_ProfileEntryNames:
     - m_Id: 797ca0271c3dd4c8aaafadb608803bc5
       m_Name: BuildTarget
@@ -66,6 +67,7 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - Weapons
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: fa3bab5a1935e4abe9d3490834a3a58c, type: 2}

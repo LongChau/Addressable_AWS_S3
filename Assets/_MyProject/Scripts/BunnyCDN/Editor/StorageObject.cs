@@ -25,6 +25,7 @@ using System.Text;
 
 namespace BunnyCDN.Net.Storage.Models
 {
+    [Serializable]
     public class StorageObject
     {
         /// <summary>
@@ -83,5 +84,11 @@ namespace BunnyCDN.Net.Storage.Models
                 return this.Path + ObjectName;
             }
         }
+    }
+
+    [Serializable]
+    public class ArrayStorageObject
+    {
+        public StorageObject[] storageObjects;
     }
 }

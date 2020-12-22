@@ -52,16 +52,33 @@ namespace BunnyCDN.Net.Storage
         /// </summary>
         /// <param name="storageZoneName">The name of the storage zone to connect to</param>
         /// <param name="apiAccessKey">The API key to authenticate with</param>
-        public BunnyCDNStorage(string storageZoneName, string apiAccessKey)
+        //public BunnyCDNStorage(string storageZoneName, string apiAccessKey)
+        //{
+        //    this.ApiAccessKey = apiAccessKey;
+        //    this.StorageZoneName = storageZoneName;
+
+        //    // Initialize the HTTP Client
+        //    _http = new HttpClient();
+        //    _http.Timeout = new TimeSpan(0, 0, 120);
+        //    _http.DefaultRequestHeaders.Add("AccessKey", this.ApiAccessKey);
+        //    _http.BaseAddress = new Uri("https://storage.bunnycdn.com/");
+        //}
+
+        /// <summary>
+        /// Initializes a new instance of the BunnyCDNStorage class 
+        /// </summary>
+        /// <param name="storageZoneName">The name of the storage zone to connect to</param>
+        /// <param name="apiAccessKey">The API key to authenticate with</param>
+        public BunnyCDNStorage(string storageZoneName, string apiAccessKey, string mainReplicationRegion = "de", HttpMessageHandler handler = null)
         {
             this.ApiAccessKey = apiAccessKey;
             this.StorageZoneName = storageZoneName;
 
             // Initialize the HTTP Client
-            _http = new HttpClient();
+            _http = handler != null ? new HttpClient(handler) : new HttpClient();
             _http.Timeout = new TimeSpan(0, 0, 120);
             _http.DefaultRequestHeaders.Add("AccessKey", this.ApiAccessKey);
-            _http.BaseAddress = new Uri("https://storage.bunnycdn.com/");
+            _http.BaseAddress = new Uri(this.GetBaseAddress(mainReplicationRegion));
         }
 
         #region Delete
@@ -86,7 +103,7 @@ namespace BunnyCDN.Net.Storage
         /// <summary>
         /// Get the list of storage objects on the given path
         /// </summary>
-        public async Task<List<StorageObject>> GetStorageObjectsAsync(string path)
+        public async Task<ArrayStorageObject> GetStorageObjectsAsync(string path)
         {
             var normalizedPath = this.NormalizePath(path, true);
             var response = await _http.GetAsync(normalizedPath);
@@ -94,7 +111,10 @@ namespace BunnyCDN.Net.Storage
             if(response.IsSuccessStatusCode)
             {
                 var responseJson = await response.Content.ReadAsStringAsync();
-                return JsonUtility.FromJson<List<StorageObject>>(responseJson);
+                Debug.Log($"{responseJson}");
+                string JSONToParse = "{\"storageObjects\":" + responseJson + "}";  // Wrap JSON. Make the array json into the root of an object.
+                var arrayStorageObjs = JsonUtility.FromJson<ArrayStorageObject>(JSONToParse);
+                return arrayStorageObjs;
             }
             else
             {
@@ -252,6 +272,21 @@ namespace BunnyCDN.Net.Storage
             }
 
             return path;
+        }
+
+        /// <summary>
+        /// Get the base HTTP URL address of the storage endpoint
+        /// </summary>
+        /// <param name="mainReplicationRegion">The master region zone code</param>
+        /// <returns></returns>
+        private string GetBaseAddress(string mainReplicationRegion)
+        {
+            if (mainReplicationRegion == "" || mainReplicationRegion.ToLower() == "de")
+            {
+                return "https://storage.bunnycdn.com/";
+            }
+
+            return $"https://{mainReplicationRegion}.storage.bunnycdn.com/";
         }
         #endregion
     }

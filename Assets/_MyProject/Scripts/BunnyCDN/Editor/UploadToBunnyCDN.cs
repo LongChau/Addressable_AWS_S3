@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using BunnyCDN.Net.Storage;
+using BunnyCDN.Net.Storage.Models;
 using UnityEditor;
 using UnityEngine;
 
@@ -55,6 +56,21 @@ namespace TheGamedevGuru
                 EditorPrefs.SetString("UploadToBunnyCDN_apiAccessKey", _apiAccessKey);
                 InitiateTask();
             }
+            if (GUILayout.Button("Get list content"))
+            {
+                var result = GetStorageObjectsTask();
+                result.ContinueWith((task) =>
+                {
+                    if (task.IsCompleted)
+                    {
+                        Debug.Log($"result: {task.Result}");
+                    }
+                    else
+                    {
+                        Debug.Log("Task Failed");
+                    }
+                });
+            }
 
             if (GUILayout.Button("Help me setting up the keys!"))
             {
@@ -69,13 +85,19 @@ namespace TheGamedevGuru
         async Task InitiateTask()   {
             await UploadAsync(_storageZoneName, _apiAccessKey, _remoteBuildPath);
         }
-        
+
+        async Task<ArrayStorageObject> GetStorageObjectsTask()
+        {
+            var result = await GetStorageObjectsAsync(_storageZoneName, _apiAccessKey);
+            return result;
+        }
+
         private static async Task UploadAsync(string storageZoneName, string apiAccessKey, string path)
         {
             try
             {
                 Debug.Log("Starting upload...");
-                var bunnyCdnStorage = new BunnyCDNStorage(storageZoneName, apiAccessKey);
+                var bunnyCdnStorage = new BunnyCDNStorage(storageZoneName, apiAccessKey, "sg");
                 foreach (var file in Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories))
                 {
                     var target = $"/{storageZoneName}/{file.Replace(path, "")}";
@@ -89,7 +111,22 @@ namespace TheGamedevGuru
                 Debug.LogError("UploadToBunnyCDN Exception: " + e.Message);
             }
         }
- 
+
+        private static async Task<ArrayStorageObject> GetStorageObjectsAsync(string storageZoneName, string apiAccessKey)
+        {
+            try
+            {
+                Debug.Log("Starting get list contents...");
+                var bunnyCdnStorage = new BunnyCDNStorage(storageZoneName, apiAccessKey, "sg");
+                var result = await bunnyCdnStorage.GetStorageObjectsAsync($"/{storageZoneName}/");
+                return result;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("GetStorageObjectsAsync Exception: " + e.Message);
+                return null;
+            }
+        }
     }
 }
 #pragma warning restore 4014

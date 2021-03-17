@@ -17,11 +17,14 @@ using System.IO;
 using System.Threading.Tasks;
 using BunnyCDN.Net.Storage;
 using BunnyCDN.Net.Storage.Models;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace TheGamedevGuru
 {
+#if UNITY_EDITOR
     /// <summary>
     /// This script will help you uploading your Unity Addressables content to your BunnyCDN Storage Zone.
     /// Questions? E-mail me at ruben@thegamedev.guru
@@ -31,7 +34,7 @@ namespace TheGamedevGuru
         private string _remoteBuildPath;
         private string _storageZoneName;
         private string _apiAccessKey;
-        
+
         [MenuItem("GamedevGuru/Addressables BunnyCDN Uploader")]
         static void Init()
         {
@@ -127,6 +130,8 @@ namespace TheGamedevGuru
                 return null;
             }
         }
+
     }
+#endif
 }
 #pragma warning restore 4014
